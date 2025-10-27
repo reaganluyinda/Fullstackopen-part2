@@ -1,12 +1,15 @@
-const Total = (props) => {
-  console.log(props);
+const Total = ({ parts }) => {
+  console.log(parts);
   return (
     <div>
       <p>
-        Number of exercises{" "}
-        {props.parts[0].exercises +
-          props.parts[1].exercises +
-          props.parts[2].exercises}
+        <strong>
+          Total of{" "}
+          {parts
+            .map((part) => part.exercises)
+            .reduce((sum, exc) => sum + exc, 0)}{" "}
+          exercises
+        </strong>
       </p>
     </div>
   );
