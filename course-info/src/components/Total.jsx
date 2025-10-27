@@ -1,13 +1,10 @@
 const Total = ({ parts }) => {
-  console.log(parts);
+  const totalParts = parts.reduce((sum, part) => sum + part.exercises, 0);
   return (
     <div>
       <p>
         <strong>
-          Total of{" "}
-          {parts
-            .map((part) => part.exercises)
-            .reduce((sum, exc) => sum + exc, 0)}{" "}
+          Total of {totalParts}
           exercises
         </strong>
       </p>
