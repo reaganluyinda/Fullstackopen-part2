@@ -1,15 +1,19 @@
 import { useState } from "react";
 
 const App = () => {
-  const [persons, setPersons] = useState([{ name: "Arto Hellas" }]);
+  const [persons, setPersons] = useState([
+    { name: "Arto Hellas", number: "040-854626" },
+  ]);
   const [newName, setNewName] = useState("");
+  const [newNumber, setNewNumber] = useState("");
 
   // Event handler for form submission
   const addPerson = (event) => {
     event.preventDefault();
-    const personObject = { name: newName };
+    const personObject = { name: newName, number: newNumber };
     setPersons(persons.concat(personObject));
     setNewName("");
+    setNewNumber("");
   };
 
   // Check for duplicate names
@@ -26,6 +30,13 @@ const App = () => {
     setNewName(event.target.value);
   };
 
+  // Event handler for number input field changes
+  const handleNumberChange = (event) => {
+    console.log(event.target.value);
+
+    setNewNumber(event.target.value);
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -34,13 +45,20 @@ const App = () => {
           name: <input value={newName} onChange={handleNameChange} />
         </div>
         <div>
+          number: <input value={newNumber} onChange={handleNumberChange} />
+        </div>
+        <div>
           <button type="submit">add</button>
         </div>
       </form>
       <h2>Numbers</h2>
       <div>
         {persons.map((person) => {
-          return <p key={person.name}>{person.name}</p>;
+          return (
+            <li key={person.name}>
+              {person.name} {person.number}
+            </li>
+          );
         })}
       </div>
     </div>
