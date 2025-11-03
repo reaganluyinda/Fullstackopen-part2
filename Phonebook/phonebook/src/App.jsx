@@ -12,6 +12,13 @@ const App = () => {
     setNewName("");
   };
 
+  // Check for duplicate names
+  const nameExists = persons.some((person) => person.name === newName);
+  if (nameExists) {
+    alert(`${newName} is already added to phonebook`);
+    return;
+  }
+
   // Event handler for input field changes
   const handleNameChange = (event) => {
     console.log(event.target.value);
