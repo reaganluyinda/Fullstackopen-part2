@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Filter from "./Components/filter.jsx";
 import Form from "./Components/form.jsx";
-import Person from "./Components/person.jsx";
 import Persons from "./Components/content.jsx";
 
 const App = () => {
