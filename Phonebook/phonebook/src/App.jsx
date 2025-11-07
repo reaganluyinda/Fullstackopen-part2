@@ -14,9 +14,9 @@ const App = () => {
   // Fetch initial data from the server
   useEffect(() => {
     console.log("Effect");
-    personService.getAll().then((response) => {
+    personService.getAll().then((intialpersons) => {
       console.log("Promise fulfilled");
-      setPersons(response.data);
+      setPersons(intialpersons);
     });
   }, []);
 
@@ -33,8 +33,8 @@ const App = () => {
     // If not duplicate, add the new person
     const personObject = { name: newName, number: newNumber };
     axios;
-    personService.create(personObject).then((response) => {
-      setPersons(persons.concat(response.data));
+    personService.create(personObject).then((createdPerson) => {
+      setPersons(persons.concat(createdPerson));
       setNewName("");
       setNewNumber("");
     });
