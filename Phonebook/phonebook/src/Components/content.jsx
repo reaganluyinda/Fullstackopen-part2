@@ -1,6 +1,6 @@
 import Person from "./person.jsx";
 const Persons = ({ filteredPersons }) => {
-  console.log(filteredPersons);
+  // console.log(filteredPersons);
 
   return (
     <div>

@@ -29,11 +29,15 @@ const App = () => {
       alert(`${newName} is already added to phonebook`);
       return;
     }
-    // If no duplicate, add the new person
+    // If not duplicate, add the new person
     const personObject = { name: newName, number: newNumber };
-    setPersons(persons.concat(personObject));
-    setNewName("");
-    setNewNumber("");
+    axios
+      .post("http://localhost:3001/persons", personObject)
+      .then((response) => {
+        setPersons(persons.concat(personObject));
+        setNewName("");
+        setNewNumber("");
+      });
   };
 
   // Filter persons based on the filter state
