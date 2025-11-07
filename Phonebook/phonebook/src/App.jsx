@@ -3,6 +3,7 @@ import Filter from "./Components/filter.jsx";
 import Form from "./Components/form.jsx";
 import Persons from "./Components/content.jsx";
 import axios from "axios";
+import personService from "./services/persons.js";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -13,7 +14,7 @@ const App = () => {
   // Fetch initial data from the server
   useEffect(() => {
     console.log("Effect");
-    axios.get("http://localhost:3001/persons").then((response) => {
+    personService.getAll().then((response) => {
       console.log("Promise fulfilled");
       setPersons(response.data);
     });
@@ -31,13 +32,12 @@ const App = () => {
     }
     // If not duplicate, add the new person
     const personObject = { name: newName, number: newNumber };
-    axios
-      .post("http://localhost:3001/persons", personObject)
-      .then((response) => {
-        setPersons(persons.concat(personObject));
-        setNewName("");
-        setNewNumber("");
-      });
+    axios;
+    personService.create(personObject).then((response) => {
+      setPersons(persons.concat(response.data));
+      setNewName("");
+      setNewNumber("");
+    });
   };
 
   // Filter persons based on the filter state
