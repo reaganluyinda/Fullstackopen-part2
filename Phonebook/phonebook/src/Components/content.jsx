@@ -1,5 +1,5 @@
 import Person from "./person.jsx";
-const Persons = ({ filteredPersons }) => {
+const Persons = ({ filteredPersons, removeEntry }) => {
   // console.log(filteredPersons);
 
   return (

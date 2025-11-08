@@ -25,7 +25,9 @@ const App = () => {
     event.preventDefault();
 
     // Check for duplicate names
-    const nameExists = persons.some((person) => person.name === newName);
+    const nameExists = persons.some(
+      (person) => person.name.toLowerCase() === newName.toLowerCase()
+    );
     if (nameExists) {
       alert(`${newName} is already added to phonebook`);
       return;
@@ -33,8 +35,8 @@ const App = () => {
     // If not duplicate, add the new person
     const personObject = { name: newName, number: newNumber };
     axios;
-    personService.create(personObject).then((createdPerson) => {
-      setPersons(persons.concat(createdPerson));
+    personService.create(personObject).then((returnedPerson) => {
+      setPersons(persons.concat(returnedPerson));
       setNewName("");
       setNewNumber("");
     });
