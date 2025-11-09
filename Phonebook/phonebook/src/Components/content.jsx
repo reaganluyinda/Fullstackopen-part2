@@ -6,7 +6,12 @@ const Persons = ({ filteredPersons, removeEntry }) => {
     <div>
       {filteredPersons.map((person) => {
         return (
-          <Person key={person.name} name={person.name} number={person.number} />
+          <Person
+            key={person.name}
+            name={person.name}
+            number={person.number}
+            onDelete={() => removeEntry(person.id)}
+          />
         );
       })}
     </div>

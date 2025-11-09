@@ -42,6 +42,17 @@ const App = () => {
     });
   };
 
+  const removeEntry = (id) => {
+    const person = persons.find((person) => person.id === id);
+    if (window.confirm(`Delete ${person.name} ?`)) {
+      personService.remove(id).then(() => {
+        console.log(`deleted ${person.name} successful`);
+
+        setPersons(persons.filter((p) => p.id !== id));
+      });
+    }
+  };
+
   // Filter persons based on the filter state
   const filteredPersons = persons.filter((person) =>
     person.name.toLowerCase().includes(filter.toLowerCase())
@@ -69,7 +80,7 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons filteredPersons={filteredPersons} removeEntry={removeEntry} />
     </div>
   );
 };
