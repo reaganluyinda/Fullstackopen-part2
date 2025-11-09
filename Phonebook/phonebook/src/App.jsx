@@ -29,13 +29,34 @@ const App = () => {
       (person) => person.name.toLowerCase() === newName.toLowerCase()
     );
     if (nameExists) {
-      alert(`${newName} is already added to phonebook`);
+      const confirmAdd = window.confirm(
+        `${newName} is already added to phonebook, replace the old number with a new one?`
+      );
+
+      if (confirmAdd) {
+        const person = persons.find(
+          (person) => person.name.toLowerCase() === newName.toLowerCase()
+        );
+        const changedPerson = { ...person, number: newNumber };
+
+        personService
+          .update(person.id, changedPerson)
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((p) => (p.id !== person.id ? p : returnedPerson))
+            );
+            setNewName("");
+            setNewNumber("");
+          });
+      }
       return;
     }
     // If not duplicate, add the new person
     const personObject = { name: newName, number: newNumber };
-    axios;
+
     personService.create(personObject).then((returnedPerson) => {
+      console.log("user added sucessfully");
+
       setPersons(persons.concat(returnedPerson));
       setNewName("");
       setNewNumber("");
