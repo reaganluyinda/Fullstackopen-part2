@@ -1,34 +1,77 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Filter from "./Components/filter.jsx";
 import Form from "./Components/form.jsx";
 import Persons from "./Components/content.jsx";
+import axios from "axios";
+import personService from "./services/persons.js";
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-123456", id: 1 },
-    { name: "Ada Lovelace", number: "39-44-5323523", id: 2 },
-    { name: "Dan Abramov", number: "12-43-234345", id: 3 },
-    { name: "Mary Poppendieck", number: "39-23-6423122", id: 4 },
-  ]);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+
+  // Fetch initial data from the server
+  useEffect(() => {
+    console.log("Effect");
+    personService.getAll().then((intialpersons) => {
+      console.log("Promise fulfilled");
+      setPersons(intialpersons);
+    });
+  }, []);
 
   // Event handler for form submission
   const addPerson = (event) => {
     event.preventDefault();
 
     // Check for duplicate names
-    const nameExists = persons.some((person) => person.name === newName);
+    const nameExists = persons.some(
+      (person) => person.name.toLowerCase() === newName.toLowerCase()
+    );
     if (nameExists) {
-      alert(`${newName} is already added to phonebook`);
+      const confirmAdd = window.confirm(
+        `${newName} is already added to phonebook, replace the old number with a new one?`
+      );
+
+      if (confirmAdd) {
+        const person = persons.find(
+          (person) => person.name.toLowerCase() === newName.toLowerCase()
+        );
+        const changedPerson = { ...person, number: newNumber };
+
+        personService
+          .update(person.id, changedPerson)
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((p) => (p.id !== person.id ? p : returnedPerson))
+            );
+            setNewName("");
+            setNewNumber("");
+          });
+      }
       return;
     }
-    // If no duplicate, add the new person
+    // If not duplicate, add the new person
     const personObject = { name: newName, number: newNumber };
-    setPersons(persons.concat(personObject));
-    setNewName("");
-    setNewNumber("");
+
+    personService.create(personObject).then((returnedPerson) => {
+      console.log("user added sucessfully");
+
+      setPersons(persons.concat(returnedPerson));
+      setNewName("");
+      setNewNumber("");
+    });
+  };
+
+  const removeEntry = (id) => {
+    const person = persons.find((person) => person.id === id);
+    if (window.confirm(`Delete ${person.name} ?`)) {
+      personService.remove(id).then(() => {
+        console.log(`deleted ${person.name} successful`);
+
+        setPersons(persons.filter((p) => p.id !== id));
+      });
+    }
   };
 
   // Filter persons based on the filter state
@@ -58,7 +101,7 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons filteredPersons={filteredPersons} removeEntry={removeEntry} />
     </div>
   );
 };
