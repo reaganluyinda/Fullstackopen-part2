@@ -4,12 +4,14 @@ import Form from "./Components/form.jsx";
 import Persons from "./Components/content.jsx";
 import axios from "axios";
 import personService from "./services/persons.js";
+import Notification from "./Components/Notification.jsx"
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [notificationMessage, setNotificationMessage] = useState('show Notification')
 
   // Fetch initial data from the server
   useEffect(() => {
@@ -24,7 +26,7 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault();
 
-    // Check for duplicate names
+    // Check for duplicate names then change contact if needed
     const nameExists = persons.some(
       (person) => person.name.toLowerCase() === newName.toLowerCase()
     );
@@ -38,13 +40,17 @@ const App = () => {
           (person) => person.name.toLowerCase() === newName.toLowerCase()
         );
         const changedPerson = { ...person, number: newNumber };
-
+// update contact 
         personService
           .update(person.id, changedPerson)
           .then((returnedPerson) => {
             setPersons(
               persons.map((p) => (p.id !== person.id ? p : returnedPerson))
             );
+            setNotificationMessage(`${person.name}'s contact has been update`)
+            setTimeout(() => {
+              setNotificationMessage(null)
+            }, 2000);
             setNewName("");
             setNewNumber("");
           });
@@ -55,7 +61,11 @@ const App = () => {
     const personObject = { name: newName, number: newNumber };
 
     personService.create(personObject).then((returnedPerson) => {
-      console.log("user added sucessfully");
+      setNotificationMessage(`Added ${newName}`)
+      setTimeout(() => {
+        setNotificationMessage(null)
+      }, 3000);
+      
 
       setPersons(persons.concat(returnedPerson));
       setNewName("");
@@ -90,7 +100,8 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+      <Notification message={notificationMessage}/>
       <Filter filter={filter} onChange={handleFilterChange} />
       <h2>Add a new</h2>
       <Form
