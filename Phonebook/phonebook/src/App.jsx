@@ -11,7 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
-  const [notificationMessage, setNotificationMessage] = useState('show Notification')
+  const [notificationMessage, setNotificationMessage] = useState(null)
 
   // Fetch initial data from the server
   useEffect(() => {
@@ -47,13 +47,18 @@ const App = () => {
             setPersons(
               persons.map((p) => (p.id !== person.id ? p : returnedPerson))
             );
-            setNotificationMessage(`${person.name}'s contact has been update`)
+            setNotificationMessage({ text: `${person.name}'s contact has been updated`, type: "success" })
             setTimeout(() => {
               setNotificationMessage(null)
             }, 2000);
             setNewName("");
             setNewNumber("");
-          });
+          }).catch(error=>{
+setNotificationMessage({text: `Information of ${person.name} has already been removed from the server`, type: "error"})
+setTimeout(() => {
+  setNotificationMessage(null)
+}, 3000);
+          })
       }
       return;
     }
@@ -61,7 +66,7 @@ const App = () => {
     const personObject = { name: newName, number: newNumber };
 
     personService.create(personObject).then((returnedPerson) => {
-      setNotificationMessage(`Added ${newName}`)
+      setNotificationMessage({text:`Added ${newName}`, type: "success"})
       setTimeout(() => {
         setNotificationMessage(null)
       }, 3000);
@@ -73,11 +78,16 @@ const App = () => {
     });
   };
 
+  // delete entry
   const removeEntry = (id) => {
     const person = persons.find((person) => person.id === id);
     if (window.confirm(`Delete ${person.name} ?`)) {
       personService.remove(id).then(() => {
-        console.log(`deleted ${person.name} successful`);
+        setNotificationMessage({text: `deleted ${person.name}`, type: "error"})
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 2000);
+        console.log(`deleted ${person.name}`);
 
         setPersons(persons.filter((p) => p.id !== id));
       });
@@ -101,7 +111,8 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Notification message={notificationMessage}/>
+      <Notification message={notificationMessage?.text} type={notificationMessage?.type} />
+
       <Filter filter={filter} onChange={handleFilterChange} />
       <h2>Add a new</h2>
       <Form
