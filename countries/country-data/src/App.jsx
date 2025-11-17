@@ -5,6 +5,7 @@ import CountryDetails from "./components/CountryDetails";
 const App = () => {
   const [value, setValue] = useState("");
   const [countries, setCountries] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   useEffect(() => {
     console.log("loading countries...");
@@ -18,7 +19,8 @@ const App = () => {
 
   const handleChange = (event) => {
     setValue(event.target.value);
-    console.log(event.target.value);
+
+    setSelectedCountry(null);
   };
 
   const filtered = countries.filter((country) =>
@@ -39,13 +41,20 @@ const App = () => {
           {filtered.length > 1 && filtered.length <= 10 && (
             <p>
               {filtered.map((country) => (
-                <li key={country.cca3}>{country.name.common}</li>
+                <li key={country.cca3}>
+                  {country.name.common}{" "}
+                  <button onClick={() => setSelectedCountry(country)}>
+                    show
+                  </button>
+                </li>
               ))}
             </p>
           )}
 
           {/* details of specific match */}
-          {filtered.length === 1 && <CountryDetails country={filtered[0]} />}
+          {(filtered.length === 1 || selectedCountry) && (
+            <CountryDetails country={selectedCountry || filtered[0]} />
+          )}
         </div>
       )}
     </div>
