@@ -2,16 +2,15 @@ import { useEffect, useState } from "react";
 import Filter from "./Components/filter.jsx";
 import Form from "./Components/form.jsx";
 import Persons from "./Components/content.jsx";
-import axios from "axios";
 import personService from "./services/persons.js";
-import Notification from "./Components/Notification.jsx"
+import Notification from "./Components/Notification.jsx";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
-  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [notificationMessage, setNotificationMessage] = useState(null);
 
   // Fetch initial data from the server
   useEffect(() => {
@@ -40,25 +39,32 @@ const App = () => {
           (person) => person.name.toLowerCase() === newName.toLowerCase()
         );
         const changedPerson = { ...person, number: newNumber };
-// update contact 
+        // update contact
         personService
           .update(person.id, changedPerson)
           .then((returnedPerson) => {
             setPersons(
               persons.map((p) => (p.id !== person.id ? p : returnedPerson))
             );
-            setNotificationMessage({ text: `${person.name}'s contact has been updated`, type: "success" })
+            setNotificationMessage({
+              text: `${person.name}'s contact has been updated`,
+              type: "success",
+            });
             setTimeout(() => {
-              setNotificationMessage(null)
+              setNotificationMessage(null);
             }, 2000);
             setNewName("");
             setNewNumber("");
-          }).catch(error=>{
-setNotificationMessage({text: `Information of ${person.name} has already been removed from the server`, type: "error"})
-setTimeout(() => {
-  setNotificationMessage(null)
-}, 3000);
           })
+          .catch((error) => {
+            setNotificationMessage({
+              text: `Information of ${person.name} has already been removed from the server`,
+              type: "error",
+            });
+            setTimeout(() => {
+              setNotificationMessage(null);
+            }, 3000);
+          });
       }
       return;
     }
@@ -66,11 +72,10 @@ setTimeout(() => {
     const personObject = { name: newName, number: newNumber };
 
     personService.create(personObject).then((returnedPerson) => {
-      setNotificationMessage({text:`Added ${newName}`, type: "success"})
+      setNotificationMessage({ text: `Added ${newName}`, type: "success" });
       setTimeout(() => {
-        setNotificationMessage(null)
+        setNotificationMessage(null);
       }, 3000);
-      
 
       setPersons(persons.concat(returnedPerson));
       setNewName("");
@@ -83,9 +88,12 @@ setTimeout(() => {
     const person = persons.find((person) => person.id === id);
     if (window.confirm(`Delete ${person.name} ?`)) {
       personService.remove(id).then(() => {
-        setNotificationMessage({text: `deleted ${person.name}`, type: "error"})
+        setNotificationMessage({
+          text: `deleted ${person.name}`,
+          type: "error",
+        });
         setTimeout(() => {
-          setNotificationMessage(null)
+          setNotificationMessage(null);
         }, 2000);
         console.log(`deleted ${person.name}`);
 
@@ -111,7 +119,10 @@ setTimeout(() => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Notification message={notificationMessage?.text} type={notificationMessage?.type} />
+      <Notification
+        message={notificationMessage?.text}
+        type={notificationMessage?.type}
+      />
 
       <Filter filter={filter} onChange={handleFilterChange} />
       <h2>Add a new</h2>
