@@ -71,16 +71,28 @@ const App = () => {
     // If not duplicate, add the new person
     const personObject = { name: newName, number: newNumber };
 
-    personService.create(personObject).then((returnedPerson) => {
-      setNotificationMessage({ text: `Added ${newName}`, type: "success" });
-      setTimeout(() => {
-        setNotificationMessage(null);
-      }, 3000);
+    personService
+      .create(personObject)
+      .then((returnedPerson) => {
+        setNotificationMessage({ text: `Added ${newName}`, type: "success" });
+        setTimeout(() => {
+          setNotificationMessage(null);
+        }, 3000);
 
-      setPersons(persons.concat(returnedPerson));
-      setNewName("");
-      setNewNumber("");
-    });
+        setPersons(persons.concat(returnedPerson));
+        setNewName("");
+        setNewNumber("");
+      })
+      .catch((error) => {
+        setNotificationMessage({
+          text: error.response.data.error,
+          type: "error",
+        });
+        setTimeout(() => {
+          setNotificationMessage(null);
+        }, 3000);
+        console.log(error.response.data.error);
+      });
   };
 
   // delete entry
